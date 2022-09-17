@@ -1,3 +1,5 @@
+import getWindow from "./getWindow";
+
 const isOldIE = (function isOldIE() {
   let memo;
 
@@ -8,7 +10,7 @@ const isOldIE = (function isOldIE() {
       // Tests for existence of standard globals is to allow style-loader
       // to operate correctly into non-standard environments
       // @see https://github.com/webpack-contrib/style-loader/issues/177
-      memo = Boolean(window && document && document.all && !window.atob);
+      memo = Boolean(getWindow() && getWindow().document && getWindow().document.all && !getWindow().atob);
     }
 
     return memo;
@@ -20,12 +22,12 @@ const getTarget = (function getTarget() {
 
   return function memorize(target) {
     if (typeof memo[target] === 'undefined') {
-      let styleTarget = document.querySelector(target);
+      let styleTarget = getWindow().document.querySelector(target);
 
       // Special case to return head of iframe instead of iframe itself
       if (
-        window.HTMLIFrameElement &&
-        styleTarget instanceof window.HTMLIFrameElement
+        getWindow().HTMLIFrameElement &&
+        styleTarget instanceof getWindow().HTMLIFrameElement
       ) {
         try {
           // This will throw an exception if access to iframe is blocked
@@ -96,7 +98,7 @@ function modulesToDom(list, options) {
 }
 
 function insertStyleElement(options) {
-  const style = document.createElement('style');
+  const style = getWindow().document.createElement('style');
   const attributes = options.attributes || {};
 
   if (typeof attributes.nonce === 'undefined') {
@@ -161,7 +163,7 @@ function applyToSingletonTag(style, index, remove, obj) {
   if (style.styleSheet) {
     style.styleSheet.cssText = replaceText(index, css);
   } else {
-    const cssNode = document.createTextNode(css);
+    const cssNode = getWindow().document.createTextNode(css);
     const childNodes = style.childNodes;
 
     if (childNodes[index]) {
@@ -202,7 +204,7 @@ function applyToTag(style, options, obj) {
       style.removeChild(style.firstChild);
     }
 
-    style.appendChild(document.createTextNode(css));
+    style.appendChild(getWindow().document.createTextNode(css));
   }
 }
 

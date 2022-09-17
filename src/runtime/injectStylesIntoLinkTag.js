@@ -1,14 +1,16 @@
+import getWindow from "./getWindow";
+
 const getTarget = (function getTarget() {
   const memo = {};
 
   return function memorize(target) {
     if (typeof memo[target] === 'undefined') {
-      let styleTarget = document.querySelector(target);
+      let styleTarget = getWindow().document.querySelector(target);
 
       // Special case to return head of iframe instead of iframe itself
       if (
-        window.HTMLIFrameElement &&
-        styleTarget instanceof window.HTMLIFrameElement
+        getWindow().HTMLIFrameElement &&
+        styleTarget instanceof getWindow().HTMLIFrameElement
       ) {
         try {
           // This will throw an exception if access to iframe is blocked
@@ -41,7 +43,7 @@ module.exports = (url, options) => {
     }
   }
 
-  const link = document.createElement('link');
+  const link = getWindow().document.createElement('link');
 
   link.rel = 'stylesheet';
   link.href = url;
